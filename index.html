@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkUp · Red Social</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --bg: #0e0e12;
+            --surf: #18181f;
+            --surf2: #22222c;
+            --bdr: #2e2e3a;
+            --acc: #7c6af7;
+            --acc2: #e879a0;
+            --tx: #f0f0f5;
+            --tx2: #8888a0;
+            --ok: #4ade80;
+            --err: #f87171;
+            --r: 12px;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--tx);
+            min-height: 100vh
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            background: var(--surf2);
+            border: 1px solid var(--bdr);
+            border-radius: 8px;
+            padding: .65rem 1rem;
+            color: var(--tx);
+            font-family: 'DM Sans', sans-serif;
+            font-size: .9rem;
+            outline: none;
+            transition: border .2s
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--acc)
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px
+        }
+
+        label {
+            display: block;
+            font-size: .75rem;
+            color: var(--tx2);
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: .3rem
+        }
+
+        .fg {
+            margin-bottom: .9rem
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: .65rem 1.4rem;
+            border-radius: 8px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: .85rem;
+            cursor: pointer;
+            border: none;
+            transition: .15s;
+            width: 100%
+        }
+
+        .btn-p {
+            background: linear-gradient(135deg, var(--acc), var(--acc2));
+            color: #fff;
+            box-shadow: 0 4px 18px rgba(124, 106, 247, .3)
+        }
+
+        .btn-p:hover {
+            opacity: .88
+        }
+
+        .btn-s {
+            background: var(--surf2);
+            color: var(--tx2);
+            border: 1px solid var(--bdr);
+            width: auto
+        }
+
+        .btn-s:hover {
+            background: var(--bdr)
+        }
+
+        .btn-d {
+            background: rgba(248, 113, 113, .12);
+            color: var(--err);
+            border: 1px solid rgba(248, 113, 113, .25);
+            width: auto;
+            padding: .45rem .9rem
+        }
+
+        .alert {
+            border-radius: 8px;
+            padding: .65rem .9rem;
+            font-size: .82rem;
+            margin-bottom: .9rem
+        }
+
+        .alert-e {
+            background: rgba(248, 113, 113, .1);
+            border: 1px solid rgba(248, 113, 113, .25);
+            color: var(--err)
+        }
+
+        .alert-s {
+            background: rgba(74, 222, 128, .1);
+            border: 1px solid rgba(74, 222, 128, .25);
+            color: var(--ok)
+        }
+
+        nav {
+            background: rgba(24, 24, 31, .97);
+            border-bottom: 1px solid var(--bdr);
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(8px)
+        }
+
+        .brand {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, var(--acc), var(--acc2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .nav-r {
+            display: flex;
+            align-items: center;
+            gap: .6rem
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn .25s ease
+        }
+
+        .page.active {
+            display: block
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .auth-wrap {
+            min-height: calc(100vh - 56px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            background: radial-gradient(ellipse at 70% 0%, rgba(124, 106, 247, .12) 0%, transparent 55%), radial-gradient(ellipse at 10% 90%, rgba(232, 121, 160, .08) 0%, transparent 50%)
+        }
+
+        .card {
+            background: var(--surf);
+            border: 1px solid var(--bdr);
+            border-radius: var(--r);
+            padding: 2rem 1.75rem;
+            width: 100%;
+            max-width: 420px
+        }
+
+        .ctitle {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            margin-bottom: .2rem;
+            background: linear-gradient(135deg, var(--tx) 40%, var(--acc));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        .csub {
+            color: var(--tx2);
+            font-size: .85rem;
+            margin-bottom: 1.4rem
+        }
+
+        .link {
+            color: var(--acc);
+            cursor: pointer;
+            text-decoration: none;
+            font-size: .85rem
+        }
+
+        .link:hover {
+            text-decoration: underline
+        }
+
+        .layout {
+            max-width: 860px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 1.25rem;
+            align-items: start
+        }
+
+        @media(max-width:640px) {
+            .layout {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .box {
+            background: var(--surf);
+            border: 1px solid var(--bdr);
+            border-radius: var(--r);
+            padding: 1.25rem
+        }
+
+        .avt {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--acc), var(--acc2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: #fff;
+            margin: 0 auto .9rem;
+            overflow: hidden
+        }
+
+        .avt img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .stitle {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: .8rem;
+            color: var(--tx2);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-bottom: .8rem
+        }
+
+        .post {
+            background: var(--surf2);
+            border: 1px solid var(--bdr);
+            border-radius: 10px;
+            padding: .9rem 1.1rem;
+            margin-bottom: .65rem
+        }
+
+        .post:last-child {
+            margin-bottom: 0
+        }
+
+        .pmsg {
+            font-size: .9rem;
+            margin-bottom: .35rem;
+            white-space: pre-wrap;
+            word-break: break-word
+        }
+
+        .pdate {
+            font-size: .72rem;
+            color: var(--tx2)
+        }
+
+        .uitem {
+            display: flex;
+            align-items: center;
+            gap: .65rem;
+            padding: .5rem .4rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background .15s
+        }
+
+        .uitem:hover {
+            background: var(--surf2)
+        }
+
+        .uavt {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--acc), var(--acc2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: .85rem;
+            color: #fff;
+            flex-shrink: 0;
+            overflow: hidden
+        }
+
+        .uavt img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .uname {
+            font-size: .88rem;
+            font-weight: 500;
+            color: var(--tx)
+        }
+
+        .uemail {
+            font-size: .74rem;
+            color: var(--tx2)
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--bdr);
+            margin: .9rem 0
+        }
+
+        .cc {
+            text-align: right;
+            font-size: .72rem;
+            color: var(--tx2);
+            margin-top: .2rem
+        }
+
+        .empty {
+            text-align: center;
+            color: var(--tx2);
+            font-size: .85rem;
+            padding: 1.5rem 0
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav id="navbar" style="display:none">
+        <span class="brand">★ LinkUp</span>
+        <div class="nav-r">
+            <span id="nav-user" style="font-size:.85rem;color:var(--tx2)"></span>
+            <button class="btn btn-d" style="padding:.38rem .8rem;font-size:.78rem" onclick="logout()">Cerrar
+                sesión</button>
+        </div>
+    </nav>
+
+    <!-- REGISTRO -->
+    <div id="pg-reg" class="page active">
+        <div class="auth-wrap">
+            <div class="card">
+                <p class="ctitle">Crear cuenta</p>
+                <p class="csub">Completá tus datos para unirte</p>
+                <div id="reg-err" class="alert alert-e" style="display:none"></div>
+                <div class="fg"><label>Nombre completo</label><input id="r-name" type="text" placeholder="Tu nombre">
+                </div>
+                <div class="fg"><label>Email</label><input id="r-email" type="email" placeholder="correo@ejemplo.com">
+                </div>
+                <div class="fg"><label>Contraseña <span style="color:var(--tx2)">(mín. 8
+                            caracteres)</span></label><input id="r-pass" type="password" placeholder="••••••••"></div>
+                <div class="fg"><label>Confirmar contraseña</label><input id="r-conf" type="password"
+                        placeholder="••••••••"></div>
+                <div class="fg"><label>Foto de perfil (URL opcional)</label><input id="r-img" type="text"
+                        placeholder="https://mi-foto.com/imagen.jpg"></div>
+                <button class="btn btn-p" onclick="doRegister()">Crear cuenta</button>
+                <p style="text-align:center;margin-top:1rem;font-size:.85rem;color:var(--tx2)">¿Ya tenés cuenta? <span
+                        class="link" onclick="goLogin()">Iniciá sesión</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="pg-login" class="page">
+        <div class="auth-wrap">
+            <div class="card">
+                <p class="ctitle">Bienvenido</p>
+                <p class="csub">Iniciá sesión para continuar</p>
+                <div id="login-ok" class="alert alert-s" style="display:none"></div>
+                <div id="login-err" class="alert alert-e" style="display:none"></div>
+                <div class="fg"><label>Email</label><input id="l-email" type="email" placeholder="correo@ejemplo.com">
+                </div>
+                <div class="fg"><label>Contraseña</label><input id="l-pass" type="password" placeholder="Tu contraseña">
+                </div>
+                <button class="btn btn-p" onclick="doLogin()">Iniciar sesión</button>
+                <p style="text-align:center;margin-top:1rem;font-size:.85rem;color:var(--tx2)">¿No tenés cuenta? <span
+                        class="link" onclick="goReg()">Registrate</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PERFIL PROPIO -->
+    <div id="pg-perfil" class="page">
+        <div class="layout">
+            <aside>
+                <div class="box" style="text-align:center">
+                    <div class="avt" id="p-avt"></div>
+                    <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1rem" id="p-name"></div>
+                    <div style="font-size:.8rem;color:var(--tx2);margin-bottom:.9rem" id="p-email"></div>
+                    <hr class="divider">
+                    <div class="stitle">Usuarios registrados</div>
+                    <ul id="user-list" style="list-style:none"></ul>
+                </div>
+            </aside>
+            <main>
+                <div class="box" style="margin-bottom:1.25rem">
+                    <div class="stitle">Nueva publicación</div>
+                    <div class="fg" style="margin-bottom:.3rem">
+                        <textarea id="new-msg" maxlength="500" placeholder="¿Qué estás pensando?"
+                            oninput="updateCC()"></textarea>
+                    </div>
+                    <div class="cc"><span id="cc-count">0</span>/500</div>
+                    <button class="btn btn-p" style="margin-top:.65rem" onclick="doPost()">Publicar</button>
+                    <div id="post-err" class="alert alert-e" style="display:none;margin-top:.65rem"></div>
+                </div>
+                <div class="box">
+                    <div class="stitle">Mis publicaciones</div>
+                    <div id="posts-list"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- PERFIL PÚBLICO -->
+    <div id="pg-public" class="page">
+        <div style="max-width:640px;margin:1.5rem auto;padding:0 1rem">
+            <button class="btn btn-s" style="margin-bottom:1rem" onclick="goBack()">← Volver</button>
+            <div class="box" style="text-align:center;margin-bottom:1.25rem">
+                <div class="avt" id="pub-avt" style="margin:0 auto .9rem"></div>
+                <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem" id="pub-name"></div>
+                <div style="font-size:.82rem;color:var(--tx2)" id="pub-email"></div>
+            </div>
+            <div class="box">
+                <div class="stitle">Publicaciones</div>
+                <div id="pub-posts"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const KEY_USERS = 'linkup_users';
+        const KEY_POSTS = 'linkup_posts';
+        const KEY_SES = 'linkup_session';
+
+        function getUsers() { try { return JSON.parse(localStorage.getItem(KEY_USERS) || '[]') } catch (e) { return [] } }
+        function getPosts() { try { return JSON.parse(localStorage.getItem(KEY_POSTS) || '[]') } catch (e) { return [] } }
+        function saveUsers(u) { localStorage.setItem(KEY_USERS, JSON.stringify(u)) }
+        function savePosts(p) { localStorage.setItem(KEY_POSTS, JSON.stringify(p)) }
+        function getSes() { try { return JSON.parse(localStorage.getItem(KEY_SES) || 'null') } catch (e) { return null } }
+        function setSes(u) { localStorage.setItem(KEY_SES, JSON.stringify(u)) }
+        function clearSes() { localStorage.removeItem(KEY_SES) }
+
+        function showErr(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.style.display = 'block' }
+        function hideEl(id) { document.getElementById(id).style.display = 'none' }
+        function $(id) { return document.getElementById(id) }
+        function initials(name) { return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) }
+        function fmtDate(iso) {
+            const d = new Date(iso);
+            return d.toLocaleDateString('es-UY', { day: '2-digit', month: 'short', year: 'numeric' }) + ' · ' +
+                d.toLocaleTimeString('es-UY', { hour: '2-digit', minute: '2-digit' });
+        }
+        function validateEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) }
+        function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') }
+
+        function setPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            $(id).classList.add('active');
+        }
+        function setNavbar(show, user = null) {
+            $('navbar').style.display = show ? 'flex' : 'none';
+            if (user) $('nav-user').textContent = user.name;
+        }
+        function makeAvt(el, user) {
+            if (user.img) {
+                el.innerHTML = `<img src="${user.img}" alt="${esc(user.name)}" onerror="this.parentElement.textContent='${initials(user.name)}'">`;
+            } else {
+                el.textContent = initials(user.name);
+            }
+        }
+
+        function goLogin(msg = '') {
+            setPage('pg-login'); setNavbar(false);
+            hideEl('login-err'); hideEl('login-ok');
+            if (msg) { $('login-ok').textContent = msg; $('login-ok').style.display = 'block' }
+        }
+        function goReg() { setPage('pg-reg'); setNavbar(false); hideEl('reg-err'); }
+
+        function goPerfil() {
+            const ses = getSes(); if (!ses) return goLogin();
+            setPage('pg-perfil'); setNavbar(true, ses);
+            renderSidebar(ses);
+            renderPosts(ses.id);
+        }
+
+        function goPublic(userId) {
+            const u = getUsers().find(x => x.id === userId);
+            if (!u) return;
+            setPage('pg-public');
+            makeAvt($('pub-avt'), u);
+            $('pub-name').textContent = u.name;
+            $('pub-email').textContent = u.email;
+            const posts = getPosts().filter(p => p.uid === userId).sort((a, b) => new Date(b.date) - new Date(a.date));
+            const el = $('pub-posts');
+            el.innerHTML = posts.length
+                ? posts.map(p => `<div class="post"><div class="pmsg">${esc(p.msg)}</div><div class="pdate">${fmtDate(p.date)}</div></div>`).join('')
+                : '<div class="empty">Sin publicaciones aún.</div>';
+        }
+
+        function goBack() { goPerfil(); }
+
+        function renderSidebar(ses) {
+            makeAvt($('p-avt'), ses);
+            $('p-name').textContent = ses.name;
+            $('p-email').textContent = ses.email;
+            const users = getUsers().filter(u => u.id !== ses.id);
+            const ul = $('user-list');
+            if (!users.length) { ul.innerHTML = '<li class="empty">Aún no hay otros usuarios.</li>'; return; }
+            ul.innerHTML = users.map(u => `
+      <li class="uitem" onclick="goPublic('${u.id}')">
+        <div class="uavt" id="ua-${u.id}">${initials(u.name)}</div>
+        <div><div class="uname">${esc(u.name)}</div><div class="uemail">${esc(u.email)}</div></div>
+      </li>`).join('');
+            users.forEach(u => {
+                if (u.img) { const el = $(`ua-${u.id}`); if (el) el.innerHTML = `<img src="${u.img}" onerror="this.parentElement.textContent='${initials(u.name)}'">`; }
+            });
+        }
+
+        function renderPosts(uid) {
+            const posts = getPosts().filter(p => p.uid === uid).sort((a, b) => new Date(b.date) - new Date(a.date));
+            const el = $('posts-list');
+            el.innerHTML = posts.length
+                ? posts.map(p => `<div class="post"><div class="pmsg">${esc(p.msg)}</div><div class="pdate">${fmtDate(p.date)}</div></div>`).join('')
+                : '<div class="empty">Todavía no publicaste nada.</div>';
+        }
+
+        function updateCC() {
+            const v = $('new-msg').value.length;
+            $('cc-count').textContent = v;
+            $('cc-count').style.color = v > 480 ? 'var(--err)' : 'var(--tx2)';
+        }
+
+        function doRegister() {
+            hideEl('reg-err');
+            const name = $('r-name').value.trim();
+            const email = $('r-email').value.trim();
+            const pass = $('r-pass').value;
+            const conf = $('r-conf').value;
+            const img = $('r-img').value.trim();
+            const errs = [];
+            if (!name) errs.push('El nombre es obligatorio.');
+            if (!validateEmail(email)) errs.push('El email no es válido.');
+            if (pass.length < 8) errs.push('La contraseña debe tener al menos 8 caracteres.');
+            if (pass !== conf) errs.push('Las contraseñas no coinciden.');
+            if (getUsers().find(u => u.email === email)) errs.push('El email ya está registrado.');
+            if (errs.length) { showErr('reg-err', errs.join(' · ')); return; }
+            const users = getUsers();
+            users.push({ id: crypto.randomUUID(), name, email, pass, img: img || null });
+            saveUsers(users);
+            goLogin('¡Registro exitoso! Ya podés iniciar sesión.');
+        }
+
+        function doLogin() {
+            hideEl('login-err'); hideEl('login-ok');
+            const email = $('l-email').value.trim();
+            const pass = $('l-pass').value;
+            const errs = [];
+            if (!validateEmail(email)) errs.push('Ingresá un email válido.');
+            if (!pass) errs.push('La contraseña es obligatoria.');
+            if (errs.length) { showErr('login-err', errs.join(' · ')); return; }
+            const user = getUsers().find(u => u.email === email && u.pass === pass);
+            if (!user) { showErr('login-err', 'Email o contraseña incorrectos.'); return; }
+            setSes({ id: user.id, name: user.name, email: user.email, img: user.img || null });
+            goPerfil();
+        }
+
+        function doPost() {
+            hideEl('post-err');
+            const msg = $('new-msg').value.trim();
+            if (!msg) { showErr('post-err', 'El mensaje no puede estar vacío.'); return; }
+            if (msg.length > 500) { showErr('post-err', 'Máximo 500 caracteres.'); return; }
+            const ses = getSes(); if (!ses) return;
+            const posts = getPosts();
+            posts.push({ id: crypto.randomUUID(), uid: ses.id, msg, date: new Date().toISOString() });
+            savePosts(posts);
+            $('new-msg').value = ''; updateCC();
+            renderPosts(ses.id);
+        }
+
+        function logout() { clearSes(); goLogin(); }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter') return;
+            const pg = document.querySelector('.page.active')?.id;
+            if (pg === 'pg-reg') doRegister();
+            else if (pg === 'pg-login') doLogin();
+        });
+
+        // Inicio
+        const ses = getSes();
+        if (ses) { goPerfil(); } else { goLogin(); }
+    </script>
+</body>
+
+</html>
